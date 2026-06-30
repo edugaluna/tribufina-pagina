@@ -1,4 +1,4 @@
-<div class="product-container">
+<div class="product-container full-width">
   <!-- Miniaturas -->
   <div class="thumbs-column">
     {% for image in product.images limit: 5 %}
@@ -60,7 +60,7 @@
   .product-container {
     max-width: 1100px;
     margin: 40px auto;
-    padding: 0 20px;
+    padding: 0 40px;
     display: grid;
     grid-template-columns: 80px 1fr 1fr;
     gap: 20px;

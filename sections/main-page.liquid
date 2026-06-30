@@ -1,4 +1,4 @@
-<div class="container">
+<div class="full-width">
   <!-- Hero Banner -->
   <section class="hero-banner">
     <button class="arrow arrow-left">←</button>
@@ -8,7 +8,7 @@
   </section>
 
   <!-- Más vendido -->
-  <section>
+  <section class="page-section">
     <div class="section-header">
       <h2>Más vendido</h2>
       <a href="{{ routes.collections_url }}" class="view-all">Ver todo ➔</a>
@@ -52,7 +52,7 @@
   </section>
 
   <!-- Novedades -->
-  <section style="margin-top: 40px;">
+  <section class="page-section">
     <div class="section-header">
       <h2>Novedades</h2>
       <a href="{{ routes.collections_url }}" class="view-all">Ver todo ➔</a>
@@ -101,12 +101,11 @@
     width: 100%;
     height: 350px;
     background: linear-gradient(180deg, #7a7a7a 0%, #4a4a4a 100%);
-    border-radius: 12px;
     position: relative;
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
-    padding: 30px;
+    padding: 30px 60px;
     color: var(--white);
     margin-bottom: 40px;
   }
@@ -120,8 +119,13 @@
     border: none;
     color: var(--white);
   }
-  .hero-banner .arrow-left { left: 20px; }
-  .hero-banner .arrow-right { right: 20px; }
+  .hero-banner .arrow-left { left: 30px; }
+  .hero-banner .arrow-right { right: 30px; }
+  .page-section {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 60px 40px;
+  }
   .section-header {
     display: flex;
     justify-content: center;
@@ -142,8 +146,8 @@
   }
   .products-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    gap: 25px;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 30px;
     margin: 20px 0;
   }
   .product-card {
