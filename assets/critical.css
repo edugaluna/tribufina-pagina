@@ -115,3 +115,24 @@ body {
 .shopify-section > .full-width {
   grid-column: 1 / -1;
 }
+
+/* === Tribu Fina - Design Tokens === */
+:root {
+  --bg-mint: #b2dfdb;
+  --dark-green: #2d5a44;
+  --text-dark: #1a1a1a;
+  --text-muted: #555555;
+  --white: #ffffff;
+  --gray-card: #809c8e;
+}
+
+body {
+  background-color: var(--bg-mint);
+  color: var(--text-dark);
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}

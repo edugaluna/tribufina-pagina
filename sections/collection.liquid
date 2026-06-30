@@ -1,41 +1,303 @@
-{% comment %}
-  This section is used in the collection template to render collection page
-  listing all products within a collection.
+<div style="max-width: 1200px; margin: 0 auto; padding: 20px;">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <a href="{{ routes.root_url }}" style="color: var(--text-dark); text-decoration: none;">〈 Regresar</a>
+    <h1 style="font-size: 28px; font-weight: bold; margin: 0 auto; transform: translateX(40px);">
+      {{ collection.title }}
+    </h1>
+    <button class="filter-toggle" style="color: var(--text-dark); text-decoration: none; font-size: 14px; background: none; border: none; cursor: pointer;">mostrar filtros ⚙️</button>
+  </div>
 
-  https://shopify.dev/docs/storefronts/themes/architecture/templates/collection
-{% endcomment %}
-
-<h1>{{ collection.title }}</h1>
-
-<div class="collection-products">
-  {% paginate collection.products by 20 %}
-    {% for product in collection.products %}
-      <div class="collection-product">
-        {% if product.featured_image %}
-          {% render 'image',
-            class: 'collection-product__image',
-            image: product.featured_image,
-            url: product.url,
-            width: 400,
-            height: 400,
-            crop: 'center'
-          %}
-        {% endif %}
-        <div class="collection-product__content">
-          <p>{{ product.title | escape | link_to: product.url }}</p>
-          <p>{{ product.price | money }}</p>
-        </div>
+  {% form 'collection', collection %}
+  <div class="collection-layout">
+    <aside class="filter-sidebar" id="filter-sidebar">
+      <div class="filter-header">
+        <h3>Filtros</h3>
+        <button class="filter-close" id="filter-close">✕</button>
       </div>
-    {% endfor %}
 
-    {{ paginate | default_pagination }}
-  {% endpaginate %}
+      {% for filter in collection.filters %}
+        <div class="filter-group">
+          <h4 class="filter-label">{{ filter.label }}</h4>
+          {% case filter.type %}
+            {% when 'list' %}
+              <div class="filter-values">
+                {% for value in filter.values %}
+                  <label class="filter-value">
+                    <input type="checkbox"
+                      name="{{ value.param_name }}"
+                      value="{{ value.value }}"
+                      {% if value.active %}checked{% endif %}
+                      onchange="this.form.submit()"
+                    >
+                    <span>{{ value.label }}</span>
+                    <span class="filter-count">({{ value.count }})</span>
+                  </label>
+                {% endfor %}
+              </div>
+            {% when 'price_range' %}
+              <div class="filter-range">
+                <div class="filter-range-inputs">
+                  <input type="number"
+                    name="{{ filter.min_value.param_name }}"
+                    placeholder="Min"
+                    value="{{ filter.min_value.value }}"
+                    class="filter-input"
+                  >
+                  <span>—</span>
+                  <input type="number"
+                    name="{{ filter.max_value.param_name }}"
+                    placeholder="Max"
+                    value="{{ filter.max_value.value }}"
+                    class="filter-input"
+                  >
+                </div>
+                <button type="submit" class="filter-apply">Aplicar</button>
+              </div>
+          {% endcase %}
+        </div>
+      {% endfor %}
+    </aside>
+
+    <div class="collection-content">
+      <div class="active-filters">
+        {% for filter in collection.filters %}
+          {% for value in filter.active_values %}
+            <a href="{{ value.url_to_remove }}" class="active-filter-tag">
+              {{ value.label }} ✕
+            </a>
+          {% endfor %}
+        {% endfor %}
+        {% if collection.filters != blank %}
+          <a href="{{ collection.url }}?sort_by={{ collection.sort_by }}" class="clear-filters">Limpiar filtros</a>
+        {% endif %}
+      </div>
+
+      <div class="products-grid">
+        {% paginate collection.products by 20 %}
+          {% for product in collection.products %}
+            <div class="product-card">
+              <a href="{{ product.url }}">
+                {% if product.featured_image %}
+                  <img
+                    src="{{ product.featured_image | image_url: width: 300 }}"
+                    alt="{{ product.title }}"
+                    class="product-image"
+                    loading="lazy"
+                    width="300"
+                    height="400"
+                  >
+                {% else %}
+                  <div class="product-image-placeholder"></div>
+                {% endif %}
+                <div class="product-title">{{ product.title }}</div>
+                <div class="product-sizes">
+                  {% for variant in product.variants %}
+                    {{ variant.title }}{% unless forloop.last %}/{% endunless %}
+                  {% endfor %}
+                </div>
+                <div class="product-price">{{ product.price | money }}</div>
+              </a>
+            </div>
+          {% else %}
+            <p>No hay productos en esta colección.</p>
+          {% endfor %}
+
+          {{ paginate | default_pagination }}
+        {% endpaginate %}
+      </div>
+    </div>
+  </div>
+  {% endform %}
 </div>
 
+{% render 'quick-add-modal' %}
+
+<script>
+  document.querySelector('.filter-toggle')?.addEventListener('click', function() {
+    const sidebar = document.getElementById('filter-sidebar');
+    sidebar.classList.toggle('open');
+  });
+  document.getElementById('filter-close')?.addEventListener('click', function() {
+    document.getElementById('filter-sidebar').classList.remove('open');
+  });
+</script>
+
 {% stylesheet %}
-  .collection-products {
+  .collection-layout {
+    display: flex;
+    gap: 30px;
+    position: relative;
+  }
+  .filter-sidebar {
+    width: 260px;
+    min-width: 260px;
+    background: var(--white);
+    padding: 20px;
+    border-radius: 8px;
+    height: fit-content;
+    position: sticky;
+    top: 20px;
+  }
+  .filter-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--gray-card);
+  }
+  .filter-header h3 {
+    font-size: 18px;
+    font-weight: bold;
+  }
+  .filter-close {
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    display: none;
+  }
+  .filter-group {
+    margin-bottom: 20px;
+  }
+  .filter-label {
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  .filter-values {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .filter-value {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    cursor: pointer;
+  }
+  .filter-value input {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--dark-green);
+  }
+  .filter-count {
+    color: var(--text-muted);
+    font-size: 11px;
+  }
+  .filter-range-inputs {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  .filter-input {
+    width: 80px;
+    padding: 6px;
+    border: 1px solid var(--text-muted);
+    border-radius: 4px;
+    font-size: 13px;
+  }
+  .filter-apply {
+    background: var(--dark-green);
+    color: var(--white);
+    border: none;
+    padding: 6px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    width: 100%;
+  }
+  .active-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 20px;
+  }
+  .active-filter-tag {
+    background: var(--dark-green);
+    color: var(--white);
+    padding: 4px 12px;
+    border-radius: 15px;
+    font-size: 12px;
+    text-decoration: none;
+  }
+  .clear-filters {
+    font-size: 12px;
+    color: var(--text-muted);
+    text-decoration: underline;
+  }
+  .collection-content {
+    flex: 1;
+    min-width: 0;
+  }
+  .products-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 25px;
+    margin: 20px 0;
+  }
+  .product-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  .product-card a {
+    text-decoration: none;
+    color: inherit;
+  }
+  .product-image-placeholder {
+    width: 100%;
+    aspect-ratio: 3/4;
+    background-color: var(--gray-card);
+    border-radius: 4px;
+    margin-bottom: 10px;
+  }
+  .product-image {
+    width: 100%;
+    aspect-ratio: 3/4;
+    object-fit: cover;
+    border-radius: 4px;
+    margin-bottom: 10px;
+  }
+  .product-title {
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 4px;
+  }
+  .product-sizes {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+  }
+  .product-price {
+    font-size: 13px;
+    font-weight: 600;
+  }
+  @media (max-width: 768px) {
+    .filter-sidebar {
+      position: fixed;
+      top: 0;
+      left: -100%;
+      width: 80%;
+      max-width: 300px;
+      height: 100vh;
+      z-index: 1000;
+      border-radius: 0;
+      transition: left 0.3s ease;
+      overflow-y: auto;
+    }
+    .filter-sidebar.open {
+      left: 0;
+    }
+    .filter-close {
+      display: block;
+    }
+    .collection-layout {
+      flex-direction: column;
+    }
   }
 {% endstylesheet %}
 

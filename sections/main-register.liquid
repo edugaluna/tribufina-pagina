@@ -1,0 +1,89 @@
+<div class="register-container">
+  <h1 class="register-title">Crea tu cuenta</h1>
+
+  {% form 'create_customer' %}
+    <div class="form-row-2col">
+      <input type="text" name="customer[first_name]" class="form-control" placeholder="Nombre" required>
+      <input type="text" name="customer[last_name]" class="form-control" placeholder="Apellidos" required>
+    </div>
+
+    <div class="input-group">
+      <input type="email" name="customer[email]" class="form-control" placeholder="Correo electrónico" required>
+    </div>
+
+    <div class="input-group">
+      <input type="password" name="customer[password]" class="form-control" placeholder="Contraseña" required>
+    </div>
+
+    <label class="checkbox-group">
+      <input type="checkbox" name="customer[accepts_marketing]"> Quiero recibir los productos por mi correo
+    </label>
+
+    <button type="submit" class="btn-submit-register">Crear cuenta</button>
+  {% endform %}
+</div>
+
+{% stylesheet %}
+  .register-container {
+    max-width: 600px;
+    margin: auto;
+    padding: 60px 20px;
+    min-height: calc(100vh - 100px);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .register-title {
+    text-align: center;
+    font-size: 36px;
+    font-weight: bold;
+    margin-bottom: 40px;
+  }
+  .form-row-2col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 20px;
+  }
+  .form-control {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    background-color: var(--white);
+    font-size: 16px;
+  }
+  .input-group {
+    margin-bottom: 20px;
+  }
+  .checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 14px;
+    margin-top: 10px;
+    margin-bottom: 40px;
+  }
+  .checkbox-group input {
+    width: 16px;
+    height: 16px;
+  }
+  .btn-submit-register {
+    background-color: var(--dark-green);
+    color: var(--white);
+    border: none;
+    width: 100%;
+    padding: 14px;
+    font-size: 20px;
+    cursor: pointer;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Registro",
+  "settings": [],
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  }
+}
+{% endschema %}

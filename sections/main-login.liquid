@@ -1,0 +1,109 @@
+<div class="split-container">
+  <div>
+    <h1 class="auth-section-title">Iniciar Sesión</h1>
+    {% form 'customer_login' %}
+      <div class="input-group">
+        <input
+          type="email"
+          name="customer[email]"
+          class="form-control"
+          placeholder="Correo electrónico"
+          required
+        >
+      </div>
+      <div class="input-group">
+        <input
+          type="password"
+          name="customer[password]"
+          class="form-control"
+          placeholder="Contraseña"
+          required
+        >
+      </div>
+      <a href="{{ routes.account_recovery_url }}" class="forgot-pass">¿Olvidaste tu contraseña?</a>
+
+      <button type="submit" class="btn-action-green">Aceptar</button>
+    {% endform %}
+  </div>
+
+  <div class="divider-line"></div>
+
+  <div class="right-side">
+    <h2 style="font-size: 24px; margin-bottom: 30px; font-weight: normal;">¿No tienes cuenta?</h2>
+    <a href="{{ routes.account_register_url }}" class="btn-action-green" style="margin-top: 0; width: 100%; max-width: 280px; text-align: center; text-decoration: none;">
+      Regístrate
+    </a>
+  </div>
+</div>
+
+{% stylesheet %}
+  .split-container {
+    max-width: 900px;
+    margin: auto;
+    display: grid;
+    grid-template-columns: 1fr 2px 1fr;
+    align-items: center;
+    gap: 40px;
+    padding: 40px 20px;
+    min-height: calc(100vh - 100px);
+  }
+  .divider-line {
+    background-color: var(--text-dark);
+    height: 70%;
+    width: 100%;
+  }
+  .auth-section-title {
+    font-size: 32px;
+    font-weight: bold;
+    margin-bottom: 30px;
+  }
+  .input-group {
+    position: relative;
+    margin-bottom: 20px;
+  }
+  .form-control {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    background-color: var(--white);
+    font-size: 16px;
+    border-radius: 0;
+  }
+  .forgot-pass {
+    display: block;
+    text-align: right;
+    font-size: 13px;
+    color: var(--text-dark);
+    text-decoration: none;
+    margin-top: 5px;
+  }
+  .btn-action-green {
+    background-color: var(--dark-green);
+    color: var(--white);
+    border: none;
+    padding: 12px 40px;
+    font-size: 18px;
+    cursor: pointer;
+    margin-top: 40px;
+    display: block;
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .right-side {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Login",
+  "settings": [],
+  "disabled_on": {
+    "groups": ["header", "footer"]
+  }
+}
+{% endschema %}

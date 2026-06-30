@@ -1,0 +1,142 @@
+<div class="modal-overlay" id="quick-add-modal" style="display: none;">
+  <div class="modal-card">
+    <div class="modal-img-placeholder">
+      {% if product.featured_image %}
+        <img src="{{ product.featured_image | image_url: width: 120 }}" alt="{{ product.title }}" width="120" height="160">
+      {% endif %}
+    </div>
+    <div class="modal-content">
+      <h3>Se agregará al carrito</h3>
+
+      <div class="selector-label">Seleccionar talla:</div>
+      <div class="btn-group size-selector">
+        {% for variant in product.variants %}
+          <button class="btn-option{% if variant == product.selected_or_first_available_variant %} selected{% endif %}"
+                  data-variant-id="{{ variant.id }}"
+                  data-variant-title="{{ variant.title }}">
+            {{ variant.title }}
+          </button>
+        {% endfor %}
+      </div>
+
+      <div class="selector-label">Seleccionar Color:</div>
+      <div class="btn-group color-selector">
+        <button class="btn-option">Gris</button>
+        <button class="btn-option">Blanco</button>
+        <button class="btn-option selected">Negro</button>
+      </div>
+
+      <button class="modal-add-btn" id="modal-add-to-cart">Agregar al carrito</button>
+      <button class="modal-cancel-btn" id="modal-cancel">Cancelar</button>
+    </div>
+  </div>
+</div>
+
+{% stylesheet %}
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.2);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+  }
+  .modal-card {
+    background-color: var(--dark-green);
+    color: var(--white);
+    width: 450px;
+    max-width: 90%;
+    border-radius: 12px;
+    padding: 30px;
+    display: flex;
+    gap: 20px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+  }
+  .modal-img-placeholder {
+    width: 120px;
+    min-width: 120px;
+    height: 160px;
+    background-color: #1c3b2d;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .modal-img-placeholder img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .modal-content {
+    flex-grow: 1;
+  }
+  .modal-content h3 {
+    font-size: 16px;
+    margin-bottom: 15px;
+  }
+  .selector-label {
+    font-size: 12px;
+    margin-bottom: 5px;
+    font-weight: 600;
+  }
+  .btn-group {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+  }
+  .btn-option {
+    background: transparent;
+    border: 1px solid var(--white);
+    color: var(--white);
+    padding: 4px 12px;
+    border-radius: 15px;
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-option.selected {
+    background-color: var(--bg-mint);
+    color: var(--dark-green);
+    border-color: var(--bg-mint);
+    font-weight: bold;
+  }
+  .modal-add-btn {
+    background: var(--bg-mint);
+    color: var(--dark-green);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    width: 100%;
+    font-size: 14px;
+    margin-bottom: 8px;
+  }
+  .modal-cancel-btn {
+    background: transparent;
+    color: var(--white);
+    border: 1px solid var(--white);
+    padding: 8px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    width: 100%;
+    font-size: 13px;
+  }
+{% endstylesheet %}
+
+<script>
+  document.querySelectorAll('.btn-option').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const parent = this.closest('.btn-group');
+      parent.querySelectorAll('.btn-option').forEach(b => b.classList.remove('selected'));
+      this.classList.add('selected');
+    });
+  });
+
+  document.getElementById('modal-cancel')?.addEventListener('click', function() {
+    document.getElementById('quick-add-modal').style.display = 'none';
+  });
+</script>

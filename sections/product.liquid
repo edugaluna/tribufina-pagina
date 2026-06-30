@@ -1,45 +1,158 @@
-{% comment %}
-  This section is used in the product template to render product page with
-  media, content, and add-to-cart form.
-
-  https://shopify.dev/docs/storefronts/themes/architecture/templates/product
-{% endcomment %}
-
-<div class="product-images">
-  {% for image in product.images %}
-    {% render 'image', class: 'product-image', image: image %}
-  {% endfor %}
-</div>
-
-<div class="product-info">
-  <h1>{{ product.title }}</h1>
-  <p>{{ product.price | money }}</p>
-  <p>{{ product.description }}</p>
-</div>
-
-<div class="product-form">
-  {% form 'product', product %}
-    {% assign current_variant = product.selected_or_first_available_variant %}
-
-    <select name="id">
-      {% for variant in product.variants %}
-        <option
-          value="{{ variant.id }}"
-          {% if variant == current_variant %}
-            selected="selected"
-          {% endif %}
+<div class="product-container">
+  <!-- Miniaturas -->
+  <div class="thumbs-column">
+    {% for image in product.images limit: 5 %}
+      <div class="thumb-box">
+        <img
+          src="{{ image | image_url: width: 80 }}"
+          alt="{{ product.title }}"
+          loading="lazy"
+          width="80"
+          height="80"
         >
-          {{ variant.title }} - {{ variant.price | money }}
-        </option>
+      </div>
+    {% else %}
+      {% for i in (1..5) %}
+        <div class="thumb-box"></div>
       {% endfor %}
-    </select>
+    {% endfor %}
+  </div>
 
-    <input type="text" name="quantity" min="1" value="1">
+  <!-- Imagen principal -->
+  <div class="main-image-box">
+    {% if product.featured_image %}
+      <img
+        src="{{ product.featured_image | image_url: width: 500 }}"
+        alt="{{ product.title }}"
+        class="main-image"
+        width="500"
+        height="667"
+      >
+    {% endif %}
+  </div>
 
-    <input type="submit" value="Add to cart">
-    {{ form | payment_button }}
-  {% endform %}
+  <!-- Info de compra -->
+  <div class="product-details-info">
+    <h1 class="detail-title">{{ product.title }}</h1>
+    <div class="detail-category">{{ product.type }}</div>
+    <div class="detail-price">{{ product.price | money }}</div>
+
+    <div class="selector-title">Selecciona la talla</div>
+    <div class="size-row">
+      {% for variant in product.variants %}
+        <button class="size-btn{% if variant == product.selected_or_first_available_variant %} active{% endif %}"
+                data-variant-id="{{ variant.id }}">
+          {{ variant.title }}
+        </button>
+      {% endfor %}
+    </div>
+
+    {% form 'product', product %}
+      <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+      <button type="submit" class="btn-add-cart">Agregar al carrito</button>
+    {% endform %}
+  </div>
 </div>
+
+{% render 'quick-add-modal' %}
+
+{% stylesheet %}
+  .product-container {
+    max-width: 1100px;
+    margin: 40px auto;
+    padding: 0 20px;
+    display: grid;
+    grid-template-columns: 80px 1fr 1fr;
+    gap: 20px;
+  }
+  .thumbs-column {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .thumb-box {
+    width: 100%;
+    aspect-ratio: 1;
+    background-color: var(--gray-card);
+    border-radius: 4px;
+    cursor: pointer;
+    overflow: hidden;
+  }
+  .thumb-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .main-image-box {
+    width: 100%;
+    aspect-ratio: 3/4;
+    background-color: var(--gray-card);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .main-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  .product-details-info {
+    padding-left: 20px;
+  }
+  .detail-title {
+    font-size: 28px;
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+  .detail-category {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 15px;
+  }
+  .detail-price {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 30px;
+  }
+  .selector-title {
+    font-size: 12px;
+    font-weight: bold;
+    margin-bottom: 8px;
+  }
+  .size-row {
+    display: flex;
+    border: 1px solid var(--text-dark);
+    width: fit-content;
+    margin-bottom: 40px;
+  }
+  .size-btn {
+    background: transparent;
+    border: none;
+    padding: 8px 20px;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  .size-btn:not(:last-child) {
+    border-right: 1px solid var(--text-dark);
+  }
+  .size-btn.active {
+    background-color: var(--dark-green);
+    color: var(--white);
+  }
+  .btn-add-cart {
+    border: 1px solid var(--text-dark);
+    background: transparent;
+    width: 100%;
+    max-width: 300px;
+    padding: 12px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .btn-add-cart:hover {
+    background-color: var(--dark-green);
+    color: var(--white);
+  }
+{% endstylesheet %}
 
 {% schema %}
 {

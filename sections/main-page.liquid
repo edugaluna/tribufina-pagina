@@ -1,0 +1,200 @@
+<div class="container">
+  <!-- Hero Banner -->
+  <section class="hero-banner">
+    <button class="arrow arrow-left">←</button>
+    <h3>Producto 1</h3>
+    <p style="font-size: 12px; opacity: 0.8;">Temática del diseño</p>
+    <button class="arrow arrow-right">→</button>
+  </section>
+
+  <!-- Más vendido -->
+  <section>
+    <div class="section-header">
+      <h2>Más vendido</h2>
+      <a href="{{ routes.collections_url }}" class="view-all">Ver todo ➔</a>
+    </div>
+    <div class="products-grid">
+      {% for product in collections.all.products limit: 5 %}
+        <div class="product-card">
+          <a href="{{ product.url }}">
+            {% if product.featured_image %}
+              <img
+                src="{{ product.featured_image | image_url: width: 300 }}"
+                alt="{{ product.title }}"
+                class="product-image"
+                loading="lazy"
+                width="300"
+                height="400"
+              >
+            {% else %}
+              <div class="product-image-placeholder"></div>
+            {% endif %}
+            <div class="product-title">{{ product.title }}</div>
+            <div class="product-sizes">
+              {% for variant in product.variants %}
+                {{ variant.title }}{% unless forloop.last %}/{% endunless %}
+              {% endfor %}
+            </div>
+            <div class="product-price">{{ product.price | money }}</div>
+          </a>
+        </div>
+      {% else %}
+        {% for i in (1..5) %}
+          <div class="product-card">
+            <div class="product-image-placeholder"></div>
+            <div class="product-title">Título del producto</div>
+            <div class="product-sizes">CH/M/G/XL</div>
+            <div class="product-price">$XXX</div>
+          </div>
+        {% endfor %}
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- Novedades -->
+  <section style="margin-top: 40px;">
+    <div class="section-header">
+      <h2>Novedades</h2>
+      <a href="{{ routes.collections_url }}" class="view-all">Ver todo ➔</a>
+    </div>
+    <div class="products-grid">
+      {% for product in collections.all.products limit: 5 offset: 5 %}
+        <div class="product-card">
+          <a href="{{ product.url }}">
+            {% if product.featured_image %}
+              <img
+                src="{{ product.featured_image | image_url: width: 300 }}"
+                alt="{{ product.title }}"
+                class="product-image"
+                loading="lazy"
+                width="300"
+                height="400"
+              >
+            {% else %}
+              <div class="product-image-placeholder"></div>
+            {% endif %}
+            <div class="product-title">{{ product.title }}</div>
+            <div class="product-sizes">
+              {% for variant in product.variants %}
+                {{ variant.title }}{% unless forloop.last %}/{% endunless %}
+              {% endfor %}
+            </div>
+            <div class="product-price">{{ product.price | money }}</div>
+          </a>
+        </div>
+      {% else %}
+        {% for i in (1..5) %}
+          <div class="product-card">
+            <div class="product-image-placeholder"></div>
+            <div class="product-title">Título del producto</div>
+            <div class="product-sizes">CH/M/G/XL</div>
+            <div class="product-price">$XXX</div>
+          </div>
+        {% endfor %}
+      {% endfor %}
+    </div>
+  </section>
+</div>
+
+{% stylesheet %}
+  .hero-banner {
+    width: 100%;
+    height: 350px;
+    background: linear-gradient(180deg, #7a7a7a 0%, #4a4a4a 100%);
+    border-radius: 12px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 30px;
+    color: var(--white);
+    margin-bottom: 40px;
+  }
+  .hero-banner .arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 24px;
+    cursor: pointer;
+    background: none;
+    border: none;
+    color: var(--white);
+  }
+  .hero-banner .arrow-left { left: 20px; }
+  .hero-banner .arrow-right { right: 20px; }
+  .section-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    margin-top: 20px;
+  }
+  .section-header h2 {
+    font-size: 24px;
+    font-weight: bold;
+  }
+  .view-all {
+    position: absolute;
+    right: 0;
+    font-size: 12px;
+    color: var(--text-dark);
+    text-decoration: none;
+  }
+  .products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 25px;
+    margin: 20px 0;
+  }
+  .product-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+  .product-card a {
+    text-decoration: none;
+    color: inherit;
+  }
+  .product-image-placeholder {
+    width: 100%;
+    aspect-ratio: 3/4;
+    background-color: var(--gray-card);
+    border-radius: 4px;
+    margin-bottom: 10px;
+  }
+  .product-image {
+    width: 100%;
+    aspect-ratio: 3/4;
+    object-fit: cover;
+    border-radius: 4px;
+    margin-bottom: 10px;
+  }
+  .product-title {
+    font-size: 14px;
+    font-weight: bold;
+    margin-bottom: 4px;
+  }
+  .product-sizes {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+  }
+  .product-price {
+    font-size: 13px;
+    font-weight: 600;
+  }
+{% endstylesheet %}
+
+{% schema %}
+{
+  "name": "Homepage",
+  "settings": [],
+  "presets": [
+    {
+      "name": "Homepage",
+      "category": "Custom"
+    }
+  ]
+}
+{% endschema %}
